@@ -36,8 +36,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/fbd09dd4-1500-42f2-b8d4-7a6848e7c1e5">
 
 1. 左メニューの「`OAuth & Permissions`」をクリックし、`Bot Token Scopes` の「Add an OAuth Scope」ボタンをクリックする<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/2bb5bc3d-3251-4b42-90ca-802d709cd7aa">
-<br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/2bb5bc3d-3251-4b42-90ca-802d709cd7aa"><br>
     <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/52af99ce-024f-44b2-a4d9-72d426b820f9"><br>
 
     Scopes には、`chat:write`, `commands` を追加する<br>
@@ -56,6 +55,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/063bd55d-fa68-4d12-b44c-62169ead7079"><br>
 
     > - `Signing Secret` の値を後段のデプロイ処理にて、環境変数 `SLACK_SIGNING_SECRET` に設定してください
+
     > - `Verification Token` の値を後段のデプロイ処理にて、環境変数 `SLACK_VERIFY_TOKEN` に設定してください
 
 ### 各種 GCP リソースのデプロイ
