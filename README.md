@@ -2,7 +2,7 @@
 
 RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用していない用語集（用語集スプレッドシートに定義）に対して応答できるようにした Slack チャットボットです。
 
-<img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/70bec528-3ba6-45ce-8605-8e8df68e1de6">
+<img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/c552d750-331c-4299-a79e-7a938106f53c">
 
 ## 動作環境
 
@@ -17,7 +17,8 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
 
 ### 用語集スプレッドシートの作成
 例えば、以下のようなフォーマットの用語集スプレッドシートを作成してください<br>
-<img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/584cde29-0dc1-4147-bece-a5d4e2b9e48a">
+<img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/dda70126-2c52-4cc5-9787-28d9f5887c63">
+
 
 > 用語集スプレッドシートにおいて、QA データとして使用するカラム名（上記例では、`用語,意味`）は、環境変数 `DATASET_TEXT_COLUMNS` で調整可能です
 
@@ -28,30 +29,31 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
 1. [Slack App](https://api.slack.com/apps) ページに移動する<br>
 
 1. 「`Create an App`」ボタンをクリック -> 「`From scratch`」をクリックし、`glossary-llm-chat-bot` という名前の Slack App を作成する<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/50d60c31-0d5f-4895-9b8c-c15cc84cbd08"><br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/e93592d3-5fcf-4bc7-a15d-4882d53c1042"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/2dba027a-c4f6-4f80-bdc4-6207f8aec8c7"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/ad5bfbe7-ade1-4b4b-8e0e-a75b846b1b08"><br>
 
 1. 左メニューの「`App Home`」をクリック -> `Show Tabs` セクションに移動し、`Allow users to send Slash commands and messages from the messages tab` を有効化する。<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/55243eba-248e-44c1-bcb2-bd9b1f3ba237"><br>
+    <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/fbd09dd4-1500-42f2-b8d4-7a6848e7c1e5">
 
 1. 左メニューの「`OAuth & Permissions`」をクリックし、`Bot Token Scopes` の「Add an OAuth Scope」ボタンをクリックする<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/97bba61c-6d07-49b9-b69e-eb7d770d743b"><br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/e03d4577-0f01-489f-826c-ca64b2f14ddd"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/2bb5bc3d-3251-4b42-90ca-802d709cd7aa">
+<br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/52af99ce-024f-44b2-a4d9-72d426b820f9"><br>
 
     Scopes には、`chat:write`, `commands` を追加する<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/1e1c3041-c089-491a-bf98-6d2dde787e53"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/747df760-9850-415a-bc06-c2c3f075db2a"><br>
 
 1. `OAuth Tokens for Your Workspace` セクションの `Install to Workspace` をクリックし、OAuth トークンを作成する<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/b3e65578-55f1-4a7b-88c2-97fbb83e458e"><br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/b0c9e00f-2fee-484f-8465-8d4587316996"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/8b4535ca-c8fd-4f39-a18e-aeaa9c07095d"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/129dd062-1bad-4204-b3bb-a93df1c52949"><br>
 
     クリック後、アクセストークンが作成されるので、`Bot User OAuth Token` から OAuth トークン値を確認する。<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/5d677c6d-3dde-4c84-8eea-ffea4ad6dc7b"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/d7b0f7a9-f663-451e-9955-a423bd2a2fb4"><br>
 
     > `Bot User OAuth Token` の値を後段のデプロイ処理にて、環境変数 `SLACK_BOT_TOKEN` に設定してください
 
 1. 左メニュー「`Basic Information`」の `App Credentials`セクションに移動し、`Signing Secret` と `Verification Token` の値を確認する<br>
-    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/1ce28b0b-645c-43d7-9d58-336624867444"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/063bd55d-fa68-4d12-b44c-62169ead7079"><br>
 
     > - `Signing Secret` の値を後段のデプロイ処理にて、環境変数 `SLACK_SIGNING_SECRET` に設定してください
     > - `Verification Token` の値を後段のデプロイ処理にて、環境変数 `SLACK_VERIFY_TOKEN` に設定してください
@@ -105,7 +107,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     ```
 
 1. 用語集スプレッドシートの共有設定に、GCPサービスアカウント `glossary-llm-chat-bot-sa@${PROJECT_ID}.iam.gserviceaccount.com` を追加する<br>
-    <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/cfc43dd6-7c81-4ebd-95f8-e47cc2f60fd9">
+    <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/34c8c570-ebb8-4a86-ac8a-d234452c7063">
 
 1. 各種 GCP リリースにデプロイする
     ```sh
@@ -113,9 +115,9 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     ```
 
 1. [Slack App](https://api.slack.com/apps) ページの左メニューの「`Slash Commands`」をクリックし、本アプリの Slack コマンドを作成する<br>
-    <img width="800" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/4037e746-1ea1-4393-82d4-22a28a6dfc08"><br>
-    <img width="800" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/5eca6db2-b8ca-4fd1-a0a3-ea3712bdd0b0"><br>
-    <img width="800" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/e1915c84-c411-4fef-b4ef-f47f3ccac86e"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/63acfc2b-ec67-457f-be9f-7d820eeb94dc"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/436bf170-3441-47c1-8b77-e890f95426cc"><br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/95936c8e-fdbd-46df-893b-215f77ff14b4"><br>
     - `Command`: `/glossary-chat-bot` を設定する
     - `Request URL`: `${API_URL}/slack/events`（例:`https://glossary-llm-chat-bot-sqwnhlznqa-an.a.run.app/slack/events`）<br>
         `API_URL` は Cloud Run の URL で、以下のコマンドで確認できます
@@ -125,17 +127,14 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
 
 ## 使用方法
 
-1. Slack の左下メニューの App から「アプリを追加する」ボタンをクリックする。<br>
-    <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/169fb32f-48fc-4b62-b178-8190a2a126ca">
-    
-1. `glossary-llm-chat-bot` という名前のアプリを検索し追加する。
-    <img width="800" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/8c6a1f9f-d996-4326-b127-4d4c5633be69"><br>
+1. Slack の左下メニューの App から「アプリを追加する」ボタンをクリックし、`glossary-llm-chat-bot` という名前のアプリを検索し追加する。<br>
+    <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/d9faaf73-5bb6-4fe5-b34f-a01b6290be30">
 
 1. アプリ追加後、アプリ上の「メッセージ」タブに移動し、`/glossary-chat-bot ${質問文}` の形式でコマンド送信する<br>
     - コマンド例<br>
-        <img width="500" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/d067fa5b-5af3-49a3-96f2-5c5834bc5fd8">
-
+        <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/757f5e2f-b8df-44ec-a15f-68b6d7b316d4"><br>
     - 出力例<br>
-        <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/70bec528-3ba6-45ce-8605-8e8df68e1de6">
+        <img width="300" alt="image" src="https://github.com/Yagami360/glossary-llm-chat-bot/assets/25688193/1a3998f0-4c88-4eba-bd91-3338294506c9">
+
 
 1. 用語を修正&追加したい場合は、用語集スプレッドシートを更新してください
