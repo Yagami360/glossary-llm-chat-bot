@@ -8,6 +8,16 @@ on:
   release:
     types: [published]
 
+# env:
+#   LOG_LEVEL: INFO
+#   IMAGE_NAME: glossary-llm-chat-bot
+#   IMAGE_TAG: latest
+#   CLOUD_RUN_NAME: glossary-llm-chat-bot
+#   SCHEDULER_NAME: glossary-llm-chat-bot
+#   SERVICE_ACCOUNT_NAME: glossary-llm-chat-bot-sa
+#   PORT: 3000
+#   SCHEDULE: "0 * * * *"
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -36,3 +46,87 @@ jobs:
           make check-fmt
         env:
           NUM_TEST_PROCESS: 4
+
+      # TODO: 公開用レポジトリで環境ごとの GitHubAction 用 secrets 値の設定が必要なので、デプロイ部分はコメントアウトしています
+
+      # - name: Install gcloud
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   uses: google-github-actions/setup-gcloud@v0.2.0
+      #   with:
+      #     project_id: ${{ secrets.PROJECT_ID }}
+      #     service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      # - name: Write gcp sa key
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   run: |
+      #     mkdir -p credentials
+      #     touch credentials/${SERVICE_ACCOUNT_NAME}.json
+      #     echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > credentials/${SERVICE_ACCOUNT_NAME}.json
+
+      # - name: Build docker image
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   run: |
+      #     docker build -f Dockerfile -t ${IMAGE_NAME} \
+      #       --target prod \
+      #       --build-arg LOG_LEVEL=${LOG_LEVEL} \
+      #       --build-arg PORT=${PORT} \
+      #       --build-arg SPREADSHEET_KEY=${{ secrets.SPREADSHEET_KEY }} \
+      #       --build-arg SPREADSHEET_NAME=${{ secrets.SPREADSHEET_NAME }} \
+      #       --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+      #       --build-arg SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }} \
+      #       --build-arg SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }} \
+      #       --build-arg SLACK_VERIFY_TOKEN=${{ secrets.SLACK_VERIFY_TOKEN }} \
+      #       --build-arg DATASET_TEXT_COLUMNS=${{ secrets.DATASET_TEXT_COLUMNS }} \
+      #       --build-arg DATASET_META_COLUMNS=${{ secrets.DATASET_META_COLUMNS }} \
+      #       .
+
+      # - name: Push docker image to GCR
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   run: |
+      #     gcloud auth configure-docker --quiet
+      #     echo "docker tag ${IMAGE_NAME} gcr.io/${{ secrets.PROJECT_ID }}/${IMAGE_NAME}:${IMAGE_TAG}"
+      #     docker tag ${IMAGE_NAME} gcr.io/${{ secrets.PROJECT_ID }}/${IMAGE_NAME}:${IMAGE_TAG}
+      #     echo "docker push gcr.io/${{ secrets.PROJECT_ID }}/${IMAGE_NAME}:${IMAGE_TAG}"
+      #     docker push gcr.io/${{ secrets.PROJECT_ID }}/${IMAGE_NAME}:${IMAGE_TAG}
+
+      # - name: Deploy to CloudRun
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   run: |
+      #     export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+      #     gcloud beta run deploy ${CLOUD_RUN_NAME} \
+      #       --image gcr.io/${{ secrets.PROJECT_ID }}/${IMAGE_NAME}:${IMAGE_TAG} \
+      #       --region="${{ secrets.REGION }}" \
+      #       --port ${PORT} \
+      #       --max-instances 10 \
+      #       --allow-unauthenticated \
+      #       --cpu-boost \
+      #       --no-cpu-throttling
+
+      # - name: Deploy to Cloud Scheduler
+      #   if: |
+      #     github.event.pull_request.merged == true &&
+      #     github.ref_name == 'master'
+      #   run: |
+      #     API_URL=$( gcloud run services describe ${CLOUD_RUN_NAME} --region ${{ secrets.REGION }} --format 'value(status.url)' )
+      #     if [ "$( gcloud scheduler jobs list --location ${{ secrets.REGION }} | awk '{print $1}' | grep -x "${CLOUD_RUN_NAME}" )" ] ; then
+      #         gcloud scheduler jobs delete ${SCHEDULER_NAME} --location ${{ secrets.REGION }} --quiet
+      #     fi
+      #     gcloud scheduler jobs create http ${SCHEDULER_NAME} \
+      #       --schedule "${SCHEDULE}" \
+      #       --uri ${API_URL}/update_db \
+      #       --http-method put \
+      #       --time-zone "Asia/Tokyo" \
+      #       --max-retry-attempts 5 \
+      #       --oidc-service-account-email "${SERVICE_ACCOUNT_NAME}@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com" \
+      #       --location ${{ secrets.REGION }}
+      #     gcloud scheduler jobs run ${SCHEDULER_NAME} --location ${{ secrets.REGION }}
