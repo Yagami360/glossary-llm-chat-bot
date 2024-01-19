@@ -1,0 +1,4 @@
+inputVariables:
+  - question
+promptTemplate: |-
+  {question}

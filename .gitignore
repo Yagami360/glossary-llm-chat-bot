@@ -1,0 +1,27 @@
+# Mac
+.DS_Store
+
+# App artifacts
+*.pyc
+
+# vscode
+/.vscode
+/.devcontainer
+
+# intermediate files
+dataset/*
+
+# credentials
+credentials/*
+
+# tf states
+.terraform
+.terraform.*
+*.tfstate
+*.tfstate.*
+
+# For debug
+.debug/*
+.logs/*
+.old/*
+docker-compose-debug.yml

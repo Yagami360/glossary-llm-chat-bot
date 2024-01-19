@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  glossary-llm-chat-bot:
+    container_name: glossary-llm-chat-bot
+    image: glossary-llm-chat-bot
+    build:
+      context: "."
+      dockerfile: Dockerfile
+      target: dev
+      args:
+        LOG_LEVEL: DEBUG
+        PROJECT_ID: dummy
+        REGION: dummy
+        PORT: 3000
+        SPREADSHEET_KEY: dummy
+        SPREADSHEET_NAME: dummy
+        OPENAI_API_KEY: dummy
+        SLACK_BOT_TOKEN: dummy
+        SLACK_SIGNING_SECRET: dummy
+        SLACK_VERIFY_TOKEN: dummy
+        DATASET_TEXT_COLUMNS: 用語,意味
+        DATASET_META_COLUMNS: 関連部門
+    volumes:
+      - ${PWD}:/app
+    ports:
+      - "3000:3000"
+    tty: true
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/glossary-llm-chat-bot-sa.json

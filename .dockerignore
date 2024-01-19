@@ -1,0 +1,14 @@
+# Mac
+.DS_Store
+
+# App artifacts
+*.pyc
+
+# vscode
+/.vscode
+/.devcontainer
+
+# For debug
+.debug/*
+.logs/*
+docker-compose-debug.yml
