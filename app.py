@@ -2,15 +2,11 @@ import os
 
 import flask
 from flask_cors import CORS
-
+from langchain.agents import AgentType, Tool, initialize_agent
 from langchain.chains import RetrievalQA
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
-from langchain.agents import Tool
-from langchain.agents import initialize_agent
-from langchain.agents import AgentType
 from langchain.utilities import SerpAPIWrapper
-
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 
