@@ -16,6 +16,7 @@ services:
         SPREADSHEET_KEY: dummy
         SPREADSHEET_NAME: dummy
         OPENAI_API_KEY: dummy
+        SERPAPI_API_KEY: dummy
         SLACK_BOT_TOKEN: dummy
         SLACK_SIGNING_SECRET: dummy
         SLACK_VERIFY_TOKEN: dummy
