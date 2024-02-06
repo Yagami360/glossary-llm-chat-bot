@@ -2,9 +2,11 @@ import os
 
 import flask
 from flask_cors import CORS
+from langchain.agents import AgentType, Tool, initialize_agent
 from langchain.chains import RetrievalQA
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
+from langchain.utilities import SerpAPIWrapper
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 
@@ -112,6 +114,116 @@ def update_db():
     return response, 200
 
 
+@log_decorator(logger=logger)
+@flask_app.route('/chat', methods=['POST'])
+def chat():
+    # slack-bot 用の認証処理
+    slack_verify_token = flask.request.form.get('token', '')
+    if not slack_verify_token == AppConfig.slack_verify_token:
+        logger.error(f"Unauthorized!")
+        response = flask.jsonify(
+            {
+                'status': 'NG',
+                'status_reason': f"Unauthorized!",
+                'question': None,
+                'answer': None,
+            }
+        )
+
+    # json body 取得
+    try:
+        question = flask.request.form.get('text', '')
+        logger.debug(f'question={question}')
+    except Exception as e:
+        logger.error(f"Failed to get json body! | {e}")
+        response = flask.jsonify(
+            {
+                'status': 'NG',
+                'status_reason': f"Failed to get json body! | {e}",
+                'question': question,
+                'answer': None,
+            }
+        )
+        return response, 400
+
+    # 特徴量データベース（VectorDB）から retriever（ユーザーからの入力文に対して、外部テキストデータの分割した各文章から類似度の高い文章を検索＆取得をするための機能）作成
+    retriever = feature_db.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={
+            "k": LLMConfig.retriever_top_k,                                     # 上位 k 個の分割文章を検索＆取得
+            "score_threshold": LLMConfig.retriever_score_threshold,             # スレッショルド値
+        },
+    )
+
+    # retriever で、ユーザーからの入力文に対して、外部テキストデータの分割した各文章から類似度の高い情報を検索＆取得
+    context = retriever.get_relevant_documents(query=question)
+    logger.debug(f"context={context}")
+
+    # prompt 設定
+    prompt = prompt_template.format(question=question, context=context)
+    logger.debug(f"prompt={prompt}")
+
+    # LangChain Data connection の Retrievers を使用して、RetrievalQA Chain（質問応答 QA の取得に使用する Chain）を生成
+    # Chain : 複数のプロンプト入力を実行するための機能
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever
+    )
+    logger.debug(f'qa_chain={qa_chain}')
+
+    # Agent 定義
+    if LLMConfig.use_function_calling:
+        tools = [
+            Tool(
+                name="RAGBot",
+                func=qa_chain.run,
+                description="RAG を使用して LLM が学習に使用していない特定ドメインの質問応答を行うbot"
+            ),
+            Tool(
+                name="GoogleSearch",
+                func=SerpAPIWrapper().run,
+                description="useful for when you need to answer questions about current events. You should ask targeted questions"
+            ),
+        ]
+        agent = initialize_agent(
+            tools,
+            llm,
+            agent=AgentType.OPENAI_FUNCTIONS,
+            verbose=True,
+        )
+
+    # LLM 推論実行（QA:質問応答）
+    try:
+        if LLMConfig.use_function_calling:
+            answer = agent.run(prompt)
+        else:
+            answer = qa_chain.run(prompt)
+        logger.info(f'answer={answer}')
+    except Exception as e:
+        logger.error(f"Failed to generate answer! | {e}")
+        response = flask.jsonify(
+            {
+                'status': 'NG',
+                'status_reason': f"Failed to generate answer! | {e}",
+                'question': question,
+                'answer': None,
+            }
+        )
+        return response, 500
+
+    # レスポンスデータ設定
+    response = flask.jsonify(
+        {
+            'status': 'OK',
+            'status_reason': f"Succeeded to generate answer",
+            'question': f"{question}",
+            'answer': f"{answer}",
+        }
+    )
+    return response, 200
+
+
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
     # /slack/events エンドポイントアクセス時（/glossary-chat-bot コマンド実行時）、slack_bolt の handler に処理を投げる
@@ -171,10 +283,34 @@ def chat_by_slack(ack, respond, command):
     )
     logger.debug(f'qa_chain={qa_chain}')
 
+    # Agent 定義
+    if LLMConfig.use_function_calling:
+        tools = [
+            Tool(
+                name="RAGBot",
+                func=qa_chain.run,
+                description="RAG を使用して LLM が学習に使用していない特定ドメインの質問応答を行うbot"
+            ),
+            Tool(
+                name="GoogleSearch",
+                func=SerpAPIWrapper().run,
+                description="useful for when you need to answer questions about current events. You should ask targeted questions"
+            ),
+        ]
+        agent = initialize_agent(
+            tools,
+            llm,
+            agent=AgentType.OPENAI_FUNCTIONS,
+            verbose=True,
+        )
+
     # LLM 推論実行（QA:質問応答）
     ack()
     try:
-        answer = qa_chain.run(prompt)
+        if LLMConfig.use_function_calling:
+            answer = agent.run(prompt)
+        else:
+            answer = qa_chain.run(prompt)
         logger.info(f'answer={answer}')
         ack()
     except Exception as e:

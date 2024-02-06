@@ -14,6 +14,7 @@ docker-build-dev:
 		--build-arg SPREADSHEET_KEY=${SPREADSHEET_KEY} \
 		--build-arg SPREADSHEET_NAME=${SPREADSHEET_NAME} \
 		--build-arg OPENAI_API_KEY=${OPENAI_API_KEY} \
+		--build-arg SERPAPI_API_KEY=${SERPAPI_API_KEY} \
 		--build-arg SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN} \
 		--build-arg SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET} \
 		--build-arg SLACK_VERIFY_TOKEN=${SLACK_VERIFY_TOKEN} \
@@ -34,6 +35,7 @@ docker-build-prod:
 		--build-arg SPREADSHEET_KEY=${SPREADSHEET_KEY} \
 		--build-arg SPREADSHEET_NAME=${SPREADSHEET_NAME} \
 		--build-arg OPENAI_API_KEY=${OPENAI_API_KEY} \
+		--build-arg SERPAPI_API_KEY=${SERPAPI_API_KEY} \
 		--build-arg SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN} \
 		--build-arg SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET} \
 		--build-arg SLACK_VERIFY_TOKEN=${SLACK_VERIFY_TOKEN} \
@@ -60,6 +62,11 @@ create-sa:
 .PHONY: deploy
 deploy:
 	docker run -it --rm -v ${PWD}:/app --name ${IMAGE_NAME_DEV} ${IMAGE_NAME_DEV} /bin/sh -c "bash tools/deploy.sh"
+
+
+.PHONY: delete
+delete:
+	docker run -it --rm -v ${PWD}:/app --name ${IMAGE_NAME_DEV} ${IMAGE_NAME_DEV} /bin/sh -c "bash tools/delete.sh"
 
 
 .PHONY: get-api-url

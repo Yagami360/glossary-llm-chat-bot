@@ -68,6 +68,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     export SPREADSHEET_KEY='dummy'
     export SPREADSHEET_NAME='dummy'
     export OPENAI_API_KEY='dummy'
+    export SERPAPI_API_KEY='dummy'
     export SLACK_BOT_TOKEN='dummy'
     export SLACK_SIGNING_SECRET='dummy'
     export SLACK_VERIFY_TOKEN='dummy'
@@ -79,6 +80,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     - `SPREADSHEET_KEY`: 用語集スプレッドシートの URL（`https://docs.google.com/spreadsheets/d/hogehoge/edit#gid=0`）における `hogehoge` 部分の値
     - `SPREADSHEET_NAME`: スプレッドシートのシート名
     - `OPENAI_API_KEY`: OpenAPI の API キー
+    - `SERPAPI_API_KEY`: SerpAPI の API キー
     - `SLACK_BOT_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
     - `SLACK_SIGNING_SECRET`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
     - `SLACK_VERIFY_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
