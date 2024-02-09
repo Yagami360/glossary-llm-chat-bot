@@ -199,18 +199,23 @@ def chat():
             answer = agent.run(prompt)
         else:
             answer = qa_chain.run(prompt)
-        logger.info(f'answer={answer}')
     except Exception as e:
-        logger.error(f"Failed to generate answer! | {e}")
-        response = flask.jsonify(
-            {
-                'status': 'NG',
-                'status_reason': f"Failed to generate answer! | {e}",
-                'question': question,
-                'answer': None,
-            }
-        )
-        return response, 500
+        try:
+            # 用語集に該当情報がみつからない かつ Google 検索でも該当情報がみつからない場合
+            answer = qa_chain.run(prompt)
+        except Exception as e:
+            logger.error(f"Failed to generate answer! | {e}")
+            response = flask.jsonify(
+                {
+                    'status': 'NG',
+                    'status_reason': f"Failed to generate answer! | {e}",
+                    'question': question,
+                    'answer': None,
+                }
+            )
+            return response, 500
+
+    logger.info(f'answer={answer}')
 
     # レスポンスデータ設定
     response = flask.jsonify(
@@ -311,12 +316,17 @@ def chat_by_slack(ack, respond, command):
             answer = agent.run(prompt)
         else:
             answer = qa_chain.run(prompt)
-        logger.info(f'answer={answer}')
         ack()
     except Exception as e:
-        logger.error(f"Failed to generate answer! | {e}")
-        respond(f"Failed to generate answer! | {e}")
-        return
+        try:
+            # 用語集に該当情報がみつからない かつ Google 検索でも該当情報がみつからない場合
+            answer = qa_chain.run(prompt)
+        except Exception as e:
+            logger.error(f"Failed to generate answer! | {e}")
+            respond(f"Failed to generate answer! | {e}")
+            return
+
+    logger.info(f'answer={answer}')
 
     # Slack 返信
     try:
