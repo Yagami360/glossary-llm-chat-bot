@@ -26,6 +26,6 @@ class LLMConfig:
     model_name = os.environ.get('MODEL_NAME', 'gpt-3.5-turbo-0613')         # "text-davinci-003", "gpt-3.5-turbo", "gpt-3.5-turbo-0613" etc
     temperature = float(os.environ.get('TEMPERATURE', '0.0'))
     retriever_top_k = int(os.environ.get('RETRIEVER_TOP_K', '4'))
-    retriever_score_threshold = float(os.environ.get('RETRIEVER_SCORE_THRESHOLD', '0.5'))
+    retriever_score_threshold = float(os.environ.get('RETRIEVER_SCORE_THRESHOLD', '0.7'))
     feature_db_type = os.environ.get('FEATURE_DB_TYPE', 'faiss')                        # "chroma" or "faiss"
     use_function_calling = strtobool(os.environ.get('USE_FUNCTION_CALLING', 'True'))    # Function calling を使用して RAG を使用しない一般的な質問応答をできるようにするかどうか

@@ -6,6 +6,7 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
 
 ## 動作環境
 
+- Ubuntu or Mac OS
 - docker
 - docker-compose
 
@@ -79,11 +80,11 @@ RAG [Retrieval-Augmented Generation] を使用して、LLM が学習に使用し
     - `REGION`: GCP リージョン
     - `SPREADSHEET_KEY`: 用語集スプレッドシートの URL（`https://docs.google.com/spreadsheets/d/hogehoge/edit#gid=0`）における `hogehoge` 部分の値
     - `SPREADSHEET_NAME`: スプレッドシートのシート名
-    - `OPENAI_API_KEY`: OpenAPI の API キー
-    - `SERPAPI_API_KEY`: SerpAPI の API キー
-    - `SLACK_BOT_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
-    - `SLACK_SIGNING_SECRET`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
-    - `SLACK_VERIFY_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能
+    - `OPENAI_API_KEY`: OpenAPI の API キー。OpenAI の API キーは https://openai.com/product の「Get started」からアカウント作成することで取得できます。
+    - `SERPAPI_API_KEY`: SerpAPI の API キー。SerpAPI の API キーは、https://serpapi.com/ からアカウント作成することで取得できます。
+    - `SLACK_BOT_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能です
+    - `SLACK_SIGNING_SECRET`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能です
+    - `SLACK_VERIFY_TOKEN`: Stack アプリ token。[Stack アプリページ](https://api.slack.com/apps)から `glossary-llm-chat-bot` という名前のアプリから確認可能です
     - `DATASET_TEXT_COLUMNS`: 用語集スプレッドシートにおいて、QA データとして使用するカラム名。例えば、`用語,意味` など
     - `DATASET_META_COLUMNS`: 用語集スプレッドシートにおいて、メタデータとして使用するカラム名。
 
